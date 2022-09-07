@@ -42,7 +42,7 @@ function ShowDependancies()
 
 function FilterByPacketManager()
 {
-    #
+    
     foreach($pm in $list)
     {
         #Write-Host $pm.packager
@@ -50,8 +50,25 @@ function FilterByPacketManager()
     }
     $pManList = $depPackageManager | select -Unique
     $pManList
-    #$depNames = $depArray | select -Unique
+    $arr_i = 0
 
+    
+    $i = 0
+    while($i -le $list.Length)
+    {        
+        foreach($pMan in $pManList)
+        {
+            #write-Host "Package Manager $($pMan)"
+            #Write-Host "  Contains the following Dependancies:"
+            $output = $list[$i].name
+            
+            if($pMan -eq $list[$i].packager)
+            {
+                #Write-Host "    $($output)"
+            }
+        }
+        $i++
+    }
 }
 
 function FilterByPath()
