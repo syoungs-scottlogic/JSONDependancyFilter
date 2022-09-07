@@ -42,20 +42,29 @@ function ShowDependancies()
 
 function FilterByPacketManager()
 {
-    
+        # GET a list of dependancies without a package manager.
+        # try adding createing another function CheckListPM to run through the while i <= list.length and return the data. Add to starred area l:65
     foreach($pm in $list)
     {
-        #Write-Host $pm.packager
         $global:depPackageManager += $pm.packager
     }
     $pManList = $depPackageManager | select -Unique
-    $pManList
+    #$pManList
     $arr_i = 0
 
     
     $i = 0
+    $j = 0
+
     while($i -le $list.Length)
-    {        
+    {
+        while($j -le $pManList.Length)
+        {
+            $host = $pManList[$j]
+            Write-Host "$($host) has the following dependancies."
+            # *******
+            $j++
+        }        
         foreach($pMan in $pManList)
         {
             #write-Host "Package Manager $($pMan)"
