@@ -2,13 +2,17 @@
 #- Show all package managers
 #- Show all paths and packages related. 
 
-### variables ###
+    ## to do ##
+#- add main screen to chose between functions.
+#- at end of functions go back to main screen rather than exit.
+#- add colour
+
+    ### variables ###
 $depArray = @()
 $depLocation = @()
 $depPackageManager = @()
 $data = Get-content "C:\Users\syoungs\OneDrive - Scott Logic Ltd\Documents\SG-payments-dependencies.json"
 $list = $data | convertfrom-json
-#$list[0].name
 foreach($bit in $list)
 {
     #Write-Host "$($bit.name)"
@@ -26,7 +30,6 @@ function ShowDependancies()
 
     while($i -le $list.Length)
     {
-            #Write-Host "$($dep)"
         foreach($dep in $depNames)
         {
             if($dep -eq $list[$i].name)
@@ -41,13 +44,15 @@ function ShowDependancies()
         $i++
     } 
     $count = $($depArray | select -Unique).count
-    write-host - "`nThere are a total of $($count) unique dependancies."
+    write-host -NoNewline "`nThere are a total of "
+    write-host -NoNewline -ForegroundColor Magenta $count
+    write-host -NoNewline " unique dependancies."
+
 }
 
+# Show all package managers and then show all dependencies installed by it.
 function FilterByPacketManager()
 {
-        # GET a list of dependancies without a package manager.
-        # try adding createing another function CheckListPM to run through the while i <= list.length and return the data. Add to starred area l:65
     $pManDeps = @()
     
     $pManList = $depPackageManager | select -Unique
@@ -66,22 +71,23 @@ function FilterByPacketManager()
     [int]$pManChoice = Read-Host -Prompt "`nPlease select of the options above to see all installed dependancies for the chosen package manager."
     if($pManChoice -lt $choice -and $pManChoice -gt 0 -and $pManChoice -is [int])
     {
-        # show dependancies
         $pManChoice--
-        Write-Host "yerrrrr $($pManChoice)"
         foreach($entry in $list)
         {
             if($entry.packager -eq $pManList[$pManChoice])
             {
-                #Write-Host
                 $pManDeps += $entry.name
             }
         }
         $uniquePManDeps = $pManDeps | Sort-Object -Unique
         
-        Write-Host "All installed dependancies for $($pManList[$pManChoice]):`n"
+        Write-Host -ForegroundColor Green "`nAll installed dependancies for $($pManList[$pManChoice]):`n"
         Write-Host ($uniquePManDeps -join "`n")
-        Write-Host "`nEnd all installed dependancies for $($pManList[$pManChoice])"
+        Write-Host -ForegroundColor Green "`nEnd all installed dependancies for $($pManList[$pManChoice])`n"
+        $count = $($pManDeps).count
+        write-host -NoNewline "`nThere are a total of "
+        write-host -NoNewline -ForegroundColor Magenta $count
+        write-host -NoNewline " unique dependancies installed via $($pManList[$pManChoice]).`n"
         
     }
     else { FilterByPacketManager }
@@ -91,12 +97,45 @@ function FilterByPacketManager()
 function FilterByPath()
 {
     #
+    $depLocList = $depLocation | select -Unique
+    $locListArr = @()
+
+    $choice = 1
+    foreach($entry in $depLocList)
+    {
+        Write-Host "$($choice). $($entry)"
+        $choice++
+    }
+
+    [int]$userChoice = Read-Host -Prompt "`nPlease select a location above to see all dependancies installed for it."
+    $userChoice--
+
+    if($userChoice -gt 0 -and $userChoice -le $userChoice -and $userChoice -is [int])
+    {
+        foreach($item in $list)
+        {
+            if($item.location.path -eq $depLocList[$userChoice])
+            {
+                $locListArr += $item.name
+            }
+        }
+
+        Write-Host -ForegroundColor Green "`nAll installed dependancies for $($depLocList[$userChoice])`n"
+        Write-Host ($locListArr -join "`n")
+        Write-Host -ForegroundColor Green "`nEnd all installed dependancies for $($depLocList[$userChoice])`n"
+        $count = $($locListArr).count
+        write-host -NoNewline "`nThere are a total of "
+        write-host -NoNewline -ForegroundColor Magenta $count
+        write-host -NoNewline " unique dependancies installed via $($depLocList[$userChoice]).`n"
+    }
+    else{FilterByPath}
 }
 
 
-### Final Output ###
+    ### Final Output ###
 #ShowDependancies
-FilterByPacketManager
+#FilterByPacketManager
+FilterByPath
 
-### Exit script ###
-Read-Host -Prompt "Press enter to exit"
+    ### Exit script ###
+Read-Host -Prompt "`nPress enter to exit"
