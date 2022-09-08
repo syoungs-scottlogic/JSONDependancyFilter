@@ -55,7 +55,12 @@ function FilterByPacketManager()
     $choice = 1
     foreach($entry in $pManList)
     {
-        Write-Host "$($choice). $($entry)"
+        if($entry -eq "")
+        {
+            Write-Host "$($choice). This is not a package manager. Possibly manually installed or part of OS" 
+        }
+        else {Write-Host "$($choice). $($entry)"}
+        
         $choice++
     }
     [int]$pManChoice = Read-Host -Prompt "`nPlease select of the options above to see all installed dependancies for the chosen package manager."
