@@ -13,6 +13,8 @@ foreach($bit in $list)
 {
     #Write-Host "$($bit.name)"
     $depArray += $bit.name
+    $depPackageManager += $bit.packager
+    $depLocation += $bit.location.path
 }
 $depNames = $depArray | select -Unique 
 
@@ -38,47 +40,48 @@ function ShowDependancies()
         }
         $i++
     } 
+    $count = $($depArray | select -Unique).count
+    write-host - "`nThere are a total of $($count) unique dependancies."
 }
 
 function FilterByPacketManager()
 {
         # GET a list of dependancies without a package manager.
         # try adding createing another function CheckListPM to run through the while i <= list.length and return the data. Add to starred area l:65
-    foreach($pm in $list)
-    {
-        $global:depPackageManager += $pm.packager
-    }
-    $pManList = $depPackageManager | select -Unique
-    #$pManList
-    $arr_i = 0
-
+    $pManDeps = @()
     
-    $i = 0
-    $j = 0
+    $pManList = $depPackageManager | select -Unique
 
-    while($i -le $list.Length)
+    $choice = 1
+    foreach($entry in $pManList)
     {
-        while($j -le $pManList.Length)
+        Write-Host "$($choice). $($entry)"
+        $choice++
+    }
+    [int]$pManChoice = Read-Host -Prompt "`nPlease select of the options above to see all installed dependancies for the chosen package manager."
+    if($pManChoice -lt $choice -and $pManChoice -gt 0 -and $pManChoice -is [int])
+    {
+        # show dependancies
+        $pManChoice--
+        Write-Host "yerrrrr $($pManChoice)"
+        foreach($entry in $list)
         {
-            $host = $pManList[$j]
-            Write-Host "$($host) has the following dependancies."
-            # *******
-            $j++
-        }        
-        foreach($pMan in $pManList)
-        {
-            #write-Host "Package Manager $($pMan)"
-            #Write-Host "  Contains the following Dependancies:"
-            $output = $list[$i].name
-            
-            if($pMan -eq $list[$i].packager)
+            if($entry.packager -eq $pManList[$pManChoice])
             {
-                #Write-Host "    $($output)"
+                #Write-Host
+                $pManDeps += $entry.name
             }
         }
-        $i++
+        $uniquePManDeps = $pManDeps | Sort-Object -Unique
+        
+        Write-Host "All installed dependancies for $($pManList[$pManChoice]):`n"
+        Write-Host ($uniquePManDeps -join "`n")
+        Write-Host "`nEnd all installed dependancies for $($pManList[$pManChoice])"
+        
     }
+    else { FilterByPacketManager }
 }
+
 
 function FilterByPath()
 {
@@ -89,8 +92,6 @@ function FilterByPath()
 ### Final Output ###
 #ShowDependancies
 FilterByPacketManager
-$count = $($depArray | select -Unique).count
-write-host - "`nThere are a total of $($count) unique dependancies."
 
 ### Exit script ###
 Read-Host -Prompt "Press enter to exit"
