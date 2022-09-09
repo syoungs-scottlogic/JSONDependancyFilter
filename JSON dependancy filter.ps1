@@ -4,8 +4,12 @@
 
     ## to do ##
 #- add main screen to chose between functions.
+#- Add Open File Dialogue box instead of hardcoding filw. 
+    # - perhaps on main screen "press 1 to open file." and a second choice to load from .\input.json
+    #- try block for each
 #- at end of functions go back to main screen rather than exit.
 #- add colour
+#- When finished, put into VSCode prettier to format code properly.
 
     ### variables ###
 $depArray = @()
@@ -93,7 +97,7 @@ function FilterByPacketManager()
     else { FilterByPacketManager }
 }
 
-
+# Show all containers then list all dependancies installed under the chosen one.
 function FilterByPath()
 {
     #
@@ -126,16 +130,21 @@ function FilterByPath()
         $count = $($locListArr).count
         write-host -NoNewline "`nThere are a total of "
         write-host -NoNewline -ForegroundColor Magenta $count
-        write-host -NoNewline " unique dependancies installed via $($depLocList[$userChoice]).`n"
+        write-host -NoNewline " unique dependancies installed on $($depLocList[$userChoice]).`n"
     }
     else{FilterByPath}
 }
 
 
+function Main()
+{
+    #
+}
+
     ### Final Output ###
 #ShowDependancies
 #FilterByPacketManager
-FilterByPath
+#FilterByPath
 
     ### Exit script ###
 Read-Host -Prompt "`nPress enter to exit"
