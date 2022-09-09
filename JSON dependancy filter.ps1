@@ -52,7 +52,9 @@ function ShowDependancies()
     $count = $($depArray | select -Unique).count
     write-host -NoNewline "`nThere are a total of "
     write-host -NoNewline -ForegroundColor Magenta $count
-    write-host -NoNewline " unique dependancies."
+    write-host -NoNewline " unique dependancies.`n"
+    Read-Host -Prompt "Press enter to return to menu"
+    BeginInformation
 
 }
 
@@ -97,6 +99,8 @@ function FilterByPacketManager()
         
     }
     else { FilterByPacketManager }
+    Read-Host -Prompt "Press enter to return to menu"
+    BeginInformation
 }
 
 # Show all containers then list all dependancies installed under the chosen one.
@@ -135,11 +139,29 @@ function FilterByPath()
         write-host -NoNewline " unique dependancies installed on $($depLocList[$userChoice]).`n"
     }
     else{FilterByPath}
+
+    Read-Host -Prompt "Press enter to return to menu"
+    BeginInformation
 }
 
 function BeginInformation()
 {
-    
+    Clear-Host
+    Write-Host "1. Show all installed dependancies, their version, and package manager."
+    Write-Host "2. Show all package managers, and their specific dependancies."
+    Write-Host "3. Show all paths/containers, and their specific dependancies.`n"
+    Do
+    {
+        [int]$response = Read-Host -Prompt "Please select an option"
+    }while($response -notin 1, 2, 3, 9)
+    switch($response)
+    {
+        1{ShowDependancies}
+        2{FilterByPacketManager}
+        3{FilterByPath}
+        9{ <# Exit #> }
+    }
+        
 }
 
 
@@ -159,11 +181,11 @@ function Main()
 
     do
     {
-        [int]$response = Read-Host -Prompt "Please select and option: "
+        [int]$response = Read-Host -Prompt "Please select and option"
     }while($response -notin 1, 2, 9)
     switch($response)
     {
-       1{ #load file
+       1{
             $location = Get-Location | ft -HideTableHeaders
             $fileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory =
             "$($location)"
@@ -171,11 +193,12 @@ function Main()
              }
             $null = $fileBrowser.ShowDialog()
             $data = Get-Content $fileBrowser.FileName
+            BeginInformation
         } 
        2{ 
             BeginInformation
         }
-       9{}
+       9{ <# exit #> }
     }
 
 
