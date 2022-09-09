@@ -1,15 +1,13 @@
 Add-Type -AssemblyName System.Windows.Forms
 
-# AUTHOR: s.youngs
+    #######################
+    
+    #  AUTHOR: s.youngs   #
 
-#- Filter through JSON document and remove duplicate dependancies. 
-#- Show all package managers
-#- Show all paths and packages related. 
+    #######################
 
-## to do ##
-#- Create mark down file detailing what to do
 
-### variables ###
+    ### variables ###
 $depArray = @()
 $depLocation = @()
 $depPackageManager = @()
@@ -21,6 +19,8 @@ foreach ($bit in $list) {
     $depLocation += $bit.location.path
 }
 $depNames = $depArray | select -Unique 
+
+    ### Primary Functions ###
 
 # Save the output to a text file. 
 function OutputToFile() {
@@ -236,7 +236,7 @@ function Main() {
     }
 }
 
-### Final Output ###
+    ### User Entry ###
 Main
-### Exit script ###
+    ### Exit script ###
 Read-Host -Prompt "`nPress enter to exit application"
