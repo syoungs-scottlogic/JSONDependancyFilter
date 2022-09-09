@@ -1,17 +1,15 @@
 Add-Type -AssemblyName System.Windows.Forms
 
+# AUTHOR: s.youngs
+
 #- Filter through JSON document and remove duplicate dependancies. 
 #- Show all package managers
 #- Show all paths and packages related. 
 
     ## to do ##
-#- add main screen to chose between functions.
-#- Add Open File Dialogue box instead of hardcoding filw. 
-    # - perhaps on main screen "press 1 to open file." and a second choice to load from .\input.json
-    #- try block for each
-#- at end of functions go back to main screen rather than exit.
 #- add colour
 #- When finished, put into VSCode prettier to format code properly.
+#- output results to text file
 
     ### variables ###
 $depArray = @()
@@ -27,6 +25,22 @@ foreach($bit in $list)
     $depLocation += $bit.location.path
 }
 $depNames = $depArray | select -Unique 
+
+function OutputToFile()
+{
+    $location = Get-Location | ft -HideTableHeaders
+    $saveFile = New-Object System.Windows.Forms.SaveFileDialog -Property @{ InitialDirectory = "$($location)" }
+    # set default file name, extention and file type.
+    $saveFile.FileName = "Result"
+    $saveFile.DefaultExt = ".txt"
+    $saveFile.Filter = "Text Documents (.txt)|*.txt"
+    #$result = $saveFile.ShowDialog()
+
+    if($saveFile.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK)
+    {
+        $saveFile.FileName
+    }
+}
 
 # Get a procedural list of all dependancies, their versions and their package manager.
 function ShowDependancies()
@@ -92,10 +106,13 @@ function FilterByPacketManager()
         Write-Host -ForegroundColor Green "`nAll installed dependancies for $($pManList[$pManChoice]):`n"
         Write-Host ($uniquePManDeps -join "`n")
         Write-Host -ForegroundColor Green "`nEnd all installed dependancies for $($pManList[$pManChoice])`n"
-        $count = $($pManDeps).count
+        $count = $($uniquePManDeps).count
         write-host -NoNewline "`nThere are a total of "
         write-host -NoNewline -ForegroundColor Magenta $count
         write-host -NoNewline " unique dependancies installed via $($pManList[$pManChoice]).`n"
+        $saveFile = OutputToFile
+        #OutputToFile($uniquePManDeps)
+        $uniquePManDeps | Out-File $saveFile -Append
         
     }
     else { FilterByPacketManager }
@@ -149,7 +166,8 @@ function BeginInformation()
     Clear-Host
     Write-Host "1. Show all installed dependancies, their version, and package manager."
     Write-Host "2. Show all package managers, and their specific dependancies."
-    Write-Host "3. Show all paths/containers, and their specific dependancies.`n"
+    Write-Host "3. Show all paths/containers, and their specific dependancies."
+    Write-Host "9. Exit menu`n"
     Do
     {
         [int]$response = Read-Host -Prompt "Please select an option"
@@ -186,29 +204,41 @@ function Main()
     switch($response)
     {
        1{
-            $location = Get-Location | ft -HideTableHeaders
-            $fileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory =
-            "$($location)"
-            Filter = "Json (*.json) |*.json"
-             }
-            $null = $fileBrowser.ShowDialog()
-            $data = Get-Content $fileBrowser.FileName
-            BeginInformation
+            try
+            {
+                $location = Get-Location | ft -HideTableHeaders
+                $fileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory =
+                "$($location)"
+                Filter = "Json (*.json) |*.json"
+                 }
+                $null = $fileBrowser.ShowDialog()
+                $data = Get-Content $fileBrowser.FileName
+                BeginInformation
+            } catch {
+                Write-Host "Incorrect file type. Please select a .json file."
+                Read-Host -Prompt "Press enter to return to main menu."
+                Main
+            }
+
         } 
        2{ 
-            BeginInformation
+            if($data)
+            {
+                BeginInformation
+            }
+            else {
+                Write-Host "There is no input.json file in the current directory. Please ensure it's there or
+                    select a file by using option 1. Press enter to return to main menu."
+                Read-Host
+                Main
+            }
+            
         }
        9{ <# exit #> }
     }
-
-
-
 }
 
     ### Final Output ###
-#ShowDependancies
-#FilterByPacketManager
-#FilterByPath
 Main
     ### Exit script ###
-Read-Host -Prompt "`nPress enter to exit"
+Read-Host -Prompt "`nPress enter to exit application"
