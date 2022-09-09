@@ -1,3 +1,5 @@
+Add-Type -AssemblyName System.Windows.Forms
+
 #- Filter through JSON document and remove duplicate dependancies. 
 #- Show all package managers
 #- Show all paths and packages related. 
@@ -15,7 +17,7 @@
 $depArray = @()
 $depLocation = @()
 $depPackageManager = @()
-$data = Get-content "C:\Users\syoungs\OneDrive - Scott Logic Ltd\Documents\SG-payments-dependencies.json"
+$data = Get-content ".\input.json"
 $list = $data | convertfrom-json
 foreach($bit in $list)
 {
@@ -135,16 +137,55 @@ function FilterByPath()
     else{FilterByPath}
 }
 
+function BeginInformation()
+{
+    
+}
+
 
 function Main()
 {
-    #
+    # 
+    Write-Host "###################################" -BackgroundColor Green -ForegroundColor Black
+    Write-Host "#                                 #" -BackgroundColor Green -ForegroundColor Black
+    Write-Host "#  List installed dependancies    #" -BackgroundColor Green -ForegroundColor Black
+    Write-Host "#    collected via JSON dump      #" -BackgroundColor Green -ForegroundColor Black
+    Write-Host "#                                 #" -BackgroundColor Green -ForegroundColor Black
+    Write-Host "###################################`n`n" -BackgroundColor Green -ForegroundColor Black
+
+    Write-Host "1. Load data from file."
+    Write-Host "2. Load data from .\input.json"
+    Write-Host "9. Exit."
+
+    do
+    {
+        [int]$response = Read-Host -Prompt "Please select and option: "
+    }while($response -notin 1, 2, 9)
+    switch($response)
+    {
+       1{ #load file
+            $location = Get-Location | ft -HideTableHeaders
+            $fileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{ InitialDirectory =
+            "$($location)"
+            Filter = "Json (*.json) |*.json"
+             }
+            $null = $fileBrowser.ShowDialog()
+            $data = Get-Content $fileBrowser.FileName
+        } 
+       2{ 
+            BeginInformation
+        }
+       9{}
+    }
+
+
+
 }
 
     ### Final Output ###
 #ShowDependancies
 #FilterByPacketManager
 #FilterByPath
-
+Main
     ### Exit script ###
 Read-Host -Prompt "`nPress enter to exit"
