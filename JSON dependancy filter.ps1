@@ -1,11 +1,10 @@
-Add-Type -AssemblyName System.Windows.Forms
-
     #######################
     
     #  AUTHOR: s.youngs   #
 
     #######################
 
+Add-Type -AssemblyName System.Windows.Forms
 
     ### variables ###
 $depArray = @()
@@ -121,7 +120,6 @@ function FilterByPacketManager() {
 
 # Show all containers then list all dependancies installed under the chosen one.
 function FilterByPath() {
-    #
     $depLocList = $depLocation | select -Unique
     $locListArr = @()
 
@@ -187,7 +185,7 @@ function BeginInformation() {
 
 
 function Main() {
-    Write-Host "###################################" -BackgroundColor Green -ForegroundColor Red
+    Write-Host "###################################" -BackgroundColor Green -ForegroundColor black
     Write-Host "#                                 #" -BackgroundColor Green -ForegroundColor Black
     Write-Host "#  List installed dependancies    #" -BackgroundColor Green -ForegroundColor Black
     Write-Host "#    collected via JSON dump      #" -BackgroundColor Green -ForegroundColor Black
@@ -239,4 +237,5 @@ function Main() {
     ### User Entry ###
 Main
     ### Exit script ###
-Read-Host -Prompt "`nPress enter to exit application"
+Write-Host "`nPress enter to exit application." -ForegroundColor Green
+Read-Host
