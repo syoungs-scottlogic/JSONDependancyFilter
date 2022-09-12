@@ -51,10 +51,10 @@ function ShowDependancies() {
     $count = $($depArray | select -Unique).count
     write-host -NoNewline "`nThere are a total of "
     write-host -NoNewline -ForegroundColor Magenta $count
-    write-host -NoNewline " unique dependancies.`n"
+    write-host -NoNewline " unique dependencies.`n"
 
     do {
-        $check = Read-Host -Prompt "Would you like to save the dependancies to a text file? y/n" 
+        $check = Read-Host -Prompt "Would you like to save the dependencies to a text file? y/n" 
     }
     while ($check -notin 'y', 'n')
     switch ($check) {
@@ -84,7 +84,7 @@ function FilterByPacketManager() {
         
         $choice++
     }
-    [int]$pManChoice = Read-Host -Prompt "`nPlease select of the options above to see all installed dependancies for the chosen package manager."
+    [int]$pManChoice = Read-Host -Prompt "`nPlease select of the options above to see all installed dependencies for the chosen package manager."
     if ($pManChoice -lt $choice -and $pManChoice -gt 0 -and $pManChoice -is [int]) {
         $pManChoice--
         foreach ($entry in $list) {
@@ -94,15 +94,15 @@ function FilterByPacketManager() {
         }
         $uniquePManDeps = $pManDeps | Sort-Object -Unique
         
-        Write-Host -ForegroundColor Green "`nAll installed dependancies for $($pManList[$pManChoice]):`n"
+        Write-Host -ForegroundColor Green "`nAll installed dependencies for $($pManList[$pManChoice]):`n"
         Write-Host ($uniquePManDeps -join "`n")
-        Write-Host -ForegroundColor Green "`nEnd all installed dependancies for $($pManList[$pManChoice])`n"
+        Write-Host -ForegroundColor Green "`nEnd all installed dependencies for $($pManList[$pManChoice])`n"
         $count = $($uniquePManDeps).count
         write-host -NoNewline "`nThere are a total of "
         write-host -NoNewline -ForegroundColor Magenta $count
-        write-host -NoNewline " unique dependancies installed via $($pManList[$pManChoice]).`n"
+        write-host -NoNewline " unique dependencies installed via $($pManList[$pManChoice]).`n"
         do {
-            $check = Read-Host -Prompt "Would you like to save the dependancies to a text file? y/n" 
+            $check = Read-Host -Prompt "Would you like to save the dependencies to a text file? y/n" 
         }
         while ($check -notin 'y', 'n')
         switch ($check) {
@@ -129,7 +129,7 @@ function FilterByPath() {
         $choice++
     }
 
-    [int]$userChoice = Read-Host -Prompt "`nPlease select a location above to see all dependancies installed for it."
+    [int]$userChoice = Read-Host -Prompt "`nPlease select a location above to see all dependencies installed for it."
     $userChoice--
 
     if ($userChoice -gt 0 -and $userChoice -le $userChoice -and $userChoice -is [int]) {
@@ -139,9 +139,9 @@ function FilterByPath() {
             }
         }
 
-        Write-Host -ForegroundColor Green "`nAll installed dependancies for $($depLocList[$userChoice])`n"
+        Write-Host -ForegroundColor Green "`nAll installed dependencies for $($depLocList[$userChoice])`n"
         Write-Host ($locListArr -join "`n")
-        Write-Host -ForegroundColor Green "`nEnd all installed dependancies for $($depLocList[$userChoice])`n"
+        Write-Host -ForegroundColor Green "`nEnd all installed dependencies for $($depLocList[$userChoice])`n"
         $count = $($locListArr).count
         write-host -NoNewline "`nThere are a total of "
         write-host -NoNewline -ForegroundColor Magenta $count
@@ -168,8 +168,8 @@ function FilterByPath() {
 function BeginInformation() {
     Clear-Host
     Write-Host "1. Show all installed dependancies, their version, and package manager."
-    Write-Host "2. Show all package managers, and their specific dependancies."
-    Write-Host "3. Show all paths/containers, and their specific dependancies."
+    Write-Host "2. Show all package managers and their specific dependancies."
+    Write-Host "3. Show all paths/containers and their specific dependancies."
     Write-Host "9. Exit menu`n"
     Do {
         [int]$response = Read-Host -Prompt "Please select an option"
@@ -187,7 +187,7 @@ function BeginInformation() {
 function Main() {
     Write-Host "###################################" -BackgroundColor Green -ForegroundColor black
     Write-Host "#                                 #" -BackgroundColor Green -ForegroundColor Black
-    Write-Host "#  List installed dependancies    #" -BackgroundColor Green -ForegroundColor Black
+    Write-Host "#  List installed dependencies    #" -BackgroundColor Green -ForegroundColor Black
     Write-Host "#    collected via JSON dump      #" -BackgroundColor Green -ForegroundColor Black
     Write-Host "#                                 #" -BackgroundColor Green -ForegroundColor Black
     Write-Host "###################################`n`n" -BackgroundColor Green -ForegroundColor Black
@@ -212,7 +212,7 @@ function Main() {
                 BeginInformation
             }
             catch {
-                Write-Host "Incorrect file type. Please select a .json file."
+                Write-Host "`nIncorrect file type. Please select a .json file."
                 Read-Host -Prompt "Press enter to return to main menu."
                 Main
             }
